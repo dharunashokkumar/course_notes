@@ -36135,18 +36135,19 @@ Respond ONLY with valid JSON:
         avoidBlock = `\n\nIMPORTANT — These questions have ALREADY been generated for this category. You MUST NOT repeat or rephrase any of them. Generate something completely different covering a different part of the lecture:\n${prevQuestions}`;
       }
 
-      const systemPrompt = `You are an NPTEL exam preparation expert. Generate exactly 3 review question and answer for the "${category}" category from the given lecture notes.
+      const systemPrompt = `You are an NPTEL exam preparation expert. Generate exactly 3 review questions and answers for the "${category}" category from the given lecture notes.
 
 Category description: ${categoryDescriptions[category]}
 
 Rules:
 - "question": concise and clear
 - "answer": 2-5 sentences, use markdown (**bold** for key terms, bullet lists, code blocks for formulas)
-- The answer must be self-contained and thorough enough for quick revision
-- Cover a part of the lecture NOT already covered by previous questions${avoidBlock}
+- Each answer must be self-contained and thorough enough for quick revision
+- Each question must cover a DIFFERENT part of the lecture
+- Do NOT repeat or rephrase any question from the list above${avoidBlock}
 
-Respond ONLY with valid JSON:
-{"tag": "${category}", "question": "...", "answer": "..."}`;
+Respond ONLY with a valid JSON array of exactly 3 objects:
+[{"tag": "${category}", "question": "...", "answer": "..."}, {"tag": "${category}", "question": "...", "answer": "..."}, {"tag": "${category}", "question": "...", "answer": "..."}]`;
 
       try {
         const model = faqModelSelect.value || 'meta-llama/llama-3.1-8b-instruct:free';
@@ -36165,7 +36166,7 @@ Respond ONLY with valid JSON:
               { role: 'user', content: `Lecture: ${lectureName}\n\n${lastLoadedMd}` }
             ],
             temperature: 0.7,
-            max_tokens: 1200
+            max_tokens: 3000
           })
         });
 
@@ -36176,18 +36177,26 @@ Respond ONLY with valid JSON:
 
         const data = await res.json();
         let content = data.choices?.[0]?.message?.content || '';
-        const jsonMatch = content.match(/\{[\s\S]*\}/);
-        if (jsonMatch) content = jsonMatch[0];
+        // Try to extract a JSON array first, fallback to single object
+        const arrMatch = content.match(/\[[\s\S]*\]/);
+        const objMatch = content.match(/\{[\s\S]*\}/);
+        let items;
+        if (arrMatch) {
+          items = JSON.parse(arrMatch[0]);
+          if (!Array.isArray(items)) items = [items];
+        } else if (objMatch) {
+          items = [JSON.parse(objMatch[0])];
+        } else {
+          throw new Error('Invalid format — no JSON found');
+        }
 
-        const parsed = JSON.parse(content);
-        if (!parsed.question || !parsed.answer) throw new Error('Invalid format');
-
-        // Normalize tag in case AI changed it
-        parsed.tag = category;
-
-        faqItems.push(parsed);
-        faqHistory.push({ tag: parsed.tag, question: parsed.question });
-        appendFaqItem(parsed);
+        for (const parsed of items) {
+          if (!parsed.question || !parsed.answer) continue;
+          parsed.tag = category;
+          faqItems.push(parsed);
+          faqHistory.push({ tag: parsed.tag, question: parsed.question });
+          appendFaqItem(parsed);
+        }
 
       } catch (err) {
         // Show error inline without clearing existing items
