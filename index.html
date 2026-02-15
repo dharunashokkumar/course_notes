@@ -849,7 +849,7 @@
       line-height: 1;
     }
 
-    .chat-api-bar {
+    .chat-api-bar, .api-key-bar {
       padding: 8px 14px;
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -857,7 +857,7 @@
       gap: 6px;
       flex-shrink: 0;
     }
-    .chat-api-bar input {
+    .chat-api-bar input, .api-key-bar input {
       flex: 1;
       padding: 5px 8px;
       border-radius: 5px;
@@ -868,8 +868,8 @@
       font-family: var(--font-body);
       outline: none;
     }
-    .chat-api-bar input:focus { border-color: var(--accent); }
-    .chat-api-bar button {
+    .chat-api-bar input:focus, .api-key-bar input:focus { border-color: var(--accent); }
+    .chat-api-bar button, .api-key-bar button {
       padding: 5px 10px;
       border-radius: 5px;
       border: none;
@@ -879,7 +879,7 @@
       cursor: pointer;
       font-family: var(--font-body);
     }
-    .chat-api-bar.saved { display: none; }
+    .chat-api-bar.saved, .api-key-bar.saved { display: none; }
 
     .chat-messages {
       flex: 1;
@@ -1986,6 +1986,10 @@
       <span class="ctx-label">Lecture:</span>
       <span class="ctx-file" id="mcqContextFile"></span>
     </div>
+    <div class="api-key-bar" id="mcqApiBar">
+      <input type="password" class="api-key-input" placeholder="OpenRouter API key" />
+      <button class="api-key-save">Save</button>
+    </div>
     <div class="mcq-body" id="mcqBody">
       <div class="mcq-empty">
         <div class="mcq-empty-icon">🎯</div>
@@ -2018,6 +2022,10 @@
       <span class="ctx-label">Lecture:</span>
       <span class="ctx-file" id="fcContextFile"></span>
     </div>
+    <div class="api-key-bar" id="fcApiBar">
+      <input type="password" class="api-key-input" placeholder="OpenRouter API key" />
+      <button class="api-key-save">Save</button>
+    </div>
     <div class="fc-body" id="fcBody">
       <div class="fc-empty">
         <div class="fc-empty-icon">🃏</div>
@@ -2047,6 +2055,10 @@
     <div class="faq-context-bar" id="faqContextBar">
       <span class="ctx-label">Lecture:</span>
       <span class="ctx-file" id="faqContextFile"></span>
+    </div>
+    <div class="api-key-bar" id="faqApiBar">
+      <input type="password" class="api-key-input" placeholder="OpenRouter API key" />
+      <button class="api-key-save">Save</button>
     </div>
     <div class="faq-body" id="faqBody">
       <div class="faq-empty">
@@ -30210,18 +30222,48 @@ After running a set of test cases, the tool produces a report showing coverage p
       localStorage.setItem('nptel-chat-model', chatModelSelect.value);
     });
 
-    // API key management
+    // API key management — shared across all drawers
     const storedKey = localStorage.getItem('nptel-chat-apikey');
-    if (storedKey) {
-      chatApiKey.value = storedKey;
-      chatApiBar.classList.add('saved');
+    const allApiKeyBars = [chatApiBar, ...document.querySelectorAll('.api-key-bar')];
+
+    function syncAllApiKeyBars() {
+      const hasKey = !!localStorage.getItem('nptel-chat-apikey');
+      allApiKeyBars.forEach(bar => {
+        if (hasKey) {
+          bar.classList.add('saved');
+        } else {
+          bar.classList.remove('saved');
+        }
+      });
     }
-    chatApiSave.addEventListener('click', () => {
-      const key = chatApiKey.value.trim();
+
+    function saveApiKeyFromBar(bar) {
+      const input = bar.querySelector('input');
+      const key = input.value.trim();
       if (key) {
         localStorage.setItem('nptel-chat-apikey', key);
-        chatApiBar.classList.add('saved');
+        // Sync the value into all other inputs
+        allApiKeyBars.forEach(b => {
+          const inp = b.querySelector('input');
+          if (inp) inp.value = key;
+        });
+        syncAllApiKeyBars();
       }
+    }
+
+    // Init: set saved state + wire up all save buttons
+    if (storedKey) {
+      chatApiKey.value = storedKey;
+      allApiKeyBars.forEach(bar => {
+        const inp = bar.querySelector('input');
+        if (inp) inp.value = storedKey;
+      });
+    }
+    syncAllApiKeyBars();
+
+    chatApiSave.addEventListener('click', () => saveApiKeyFromBar(chatApiBar));
+    document.querySelectorAll('.api-key-bar .api-key-save').forEach(btn => {
+      btn.addEventListener('click', () => saveApiKeyFromBar(btn.closest('.api-key-bar')));
     });
 
     // Toggle chatbox
@@ -30338,6 +30380,7 @@ After running a set of test cases, the tool produces a report showing coverage p
       const apiKey = localStorage.getItem('nptel-chat-apikey');
       if (!apiKey) {
         chatApiBar.classList.remove('saved');
+        syncAllApiKeyBars();
         appendChatMsg('Please enter your OpenRouter API key above.', 'error');
         return;
       }
@@ -30603,7 +30646,8 @@ After running a set of test cases, the tool produces a report showing coverage p
     async function generateMCQs() {
       const apiKey = localStorage.getItem('nptel-chat-apikey');
       if (!apiKey) {
-        mcqBody.innerHTML = '<div class="mcq-empty" style="color:#ef4444;">Please set your OpenRouter API key in the AI Chat panel first.</div>';
+        mcqBody.innerHTML = '<div class="mcq-empty" style="color:#ef4444;">Please enter your OpenRouter API key above, then try again.</div>';
+        syncAllApiKeyBars();
         return;
       }
       if (!currentFile || !lastLoadedMd) {
@@ -31005,7 +31049,8 @@ ${lastLoadedMd}`;
     async function generateFlashcards() {
       const apiKey = localStorage.getItem('nptel-chat-apikey');
       if (!apiKey) {
-        fcBody.innerHTML = '<div class="fc-empty" style="color:#ef4444;">Please set your OpenRouter API key in the AI Chat panel first.</div>';
+        fcBody.innerHTML = '<div class="fc-empty" style="color:#ef4444;">Please enter your OpenRouter API key above, then try again.</div>';
+        syncAllApiKeyBars();
         return;
       }
       if (!currentFile || !lastLoadedMd) {
@@ -31314,7 +31359,8 @@ Respond ONLY with valid JSON:
     async function generateSingleFaq() {
       const apiKey = localStorage.getItem('nptel-chat-apikey');
       if (!apiKey) {
-        faqBody.innerHTML = '<div class="faq-empty" style="color:#ef4444;">Please set your OpenRouter API key in the AI Chat panel first.</div>';
+        faqBody.innerHTML = '<div class="faq-empty" style="color:#ef4444;">Please enter your OpenRouter API key above, then try again.</div>';
+        syncAllApiKeyBars();
         return;
       }
       if (!currentFile || !lastLoadedMd) {
