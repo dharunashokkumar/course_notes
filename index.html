@@ -730,6 +730,1172 @@
       .content-wrapper { overflow: visible; }
       .md-content { max-width: 100%; padding: 0; }
     }
+
+    /* ═══ CHATBOX ═══ */
+    .chat-toggle {
+      position: fixed;
+      right: 0;
+      top: 20%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 90px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      cursor: grab;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      box-shadow: -3px 0 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transition: background 0.2s, width 0.2s;
+      user-select: none;
+      padding: 0 2px;
+    }
+    .chat-toggle:hover { background: var(--accent-hover); width: 32px; }
+    .chat-toggle:active { cursor: grabbing; }
+    .chat-toggle.hidden { transform: translateX(100%) translateY(-50%); pointer-events: none; opacity: 0; transition: transform 0.3s, opacity 0.3s; }
+    .chat-toggle.dragging { opacity: 0.85; }
+
+    .chatbox {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateX(110%) translateY(-50%);
+      width: 400px;
+      height: 520px;
+      background: var(--content-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px 0 0 12px;
+      box-shadow: -6px 0 32px rgba(0,0,0,0.18);
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: var(--font-body);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .chatbox.open { transform: translateX(0) translateY(-50%); }
+
+    .chatbox.expanded {
+      width: 600px;
+      height: 85vh;
+    }
+
+    .chat-header {
+      padding: 10px 14px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .chat-header-title { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .chat-header select {
+      flex: 1;
+      min-width: 0;
+      padding: 4px 6px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #d4d4d8;
+      font-size: 11px;
+      font-family: var(--font-body);
+      outline: none;
+      cursor: pointer;
+    }
+    .chat-header select option { background: #18181b; color: #d4d4d8; }
+    .chat-expand-btn, .chat-close-btn {
+      background: none;
+      border: none;
+      color: #a1a1aa;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .chat-expand-btn:hover, .chat-close-btn:hover { color: #fff; }
+
+    .chat-context-bar {
+      padding: 6px 14px;
+      background: rgba(99,102,241,0.08);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--accent);
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .chat-context-bar.visible { display: flex; }
+    .chat-context-bar .ctx-label { font-weight: 600; }
+    .chat-context-bar .ctx-file { opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chat-context-bar .ctx-clear {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .chat-api-bar {
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .chat-api-bar input {
+      flex: 1;
+      padding: 5px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--code-bg);
+      color: var(--text);
+      font-size: 11px;
+      font-family: var(--font-body);
+      outline: none;
+    }
+    .chat-api-bar input:focus { border-color: var(--accent); }
+    .chat-api-bar button {
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+    .chat-api-bar.saved { display: none; }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .chat-msg {
+      max-width: 88%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 3px;
+    }
+    .chat-msg.assistant {
+      align-self: flex-start;
+      background: var(--code-bg);
+      color: var(--text);
+      border-bottom-left-radius: 3px;
+      white-space: normal;
+      line-height: 1.7;
+    }
+    .chat-msg.assistant p { margin: 0 0 10px 0; }
+    .chat-msg.assistant p:last-child { margin-bottom: 0; }
+    .chat-msg.assistant strong { font-weight: 700; }
+    .chat-msg.assistant em { font-style: italic; }
+    .chat-msg.assistant ul, .chat-msg.assistant ol { margin: 8px 0 10px 20px; padding-left: 4px; }
+    .chat-msg.assistant li { margin-bottom: 5px; line-height: 1.6; }
+    .chat-msg.assistant li::marker { color: var(--accent); }
+    .chat-msg.assistant code {
+      background: rgba(0,0,0,0.06);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    .chat-msg.assistant pre {
+      background: var(--pre-bg);
+      color: var(--pre-text);
+      padding: 10px 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 12px;
+      margin: 10px 0;
+      line-height: 1.5;
+    }
+    .chat-msg.assistant pre code {
+      background: none;
+      padding: 0;
+      font-size: 12px;
+    }
+    .chat-msg.assistant h1 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 16px 0 8px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-msg.assistant h2 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 14px 0 6px 0;
+    }
+    .chat-msg.assistant h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 12px 0 5px 0;
+    }
+    .chat-msg.assistant h4, .chat-msg.assistant h5, .chat-msg.assistant h6 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 10px 0 4px 0;
+    }
+    .chat-msg.assistant h1:first-child,
+    .chat-msg.assistant h2:first-child,
+    .chat-msg.assistant h3:first-child { margin-top: 0; }
+    .chat-msg.assistant blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 6px 12px;
+      margin: 10px 0;
+      color: var(--text-secondary);
+      background: rgba(0,0,0,0.02);
+      border-radius: 0 4px 4px 0;
+    }
+    .chat-msg.assistant hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 12px 0;
+    }
+    .chat-msg.assistant table {
+      border-collapse: collapse;
+      margin: 8px 0;
+      font-size: 12px;
+      width: 100%;
+    }
+    .chat-msg.assistant th, .chat-msg.assistant td {
+      border: 1px solid var(--border);
+      padding: 5px 8px;
+      text-align: left;
+    }
+    .chat-msg.assistant th {
+      background: rgba(0,0,0,0.04);
+      font-weight: 600;
+    }
+    .chat-msg.error {
+      align-self: center;
+      background: #fef2f2;
+      color: #dc2626;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+    .chat-msg.typing {
+      align-self: flex-start;
+      background: var(--code-bg);
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .chat-input-area {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .chat-input-area textarea {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--code-bg);
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font-body);
+      outline: none;
+      resize: none;
+      max-height: 80px;
+      line-height: 1.4;
+    }
+    .chat-input-area textarea:focus { border-color: var(--accent); }
+    .chat-input-area button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      align-self: flex-end;
+    }
+    .chat-input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .chat-input-area button:hover:not(:disabled) { background: var(--accent-hover); }
+
+    @media (max-width: 500px) {
+      .chatbox { width: 100vw; height: 70vh; border-radius: 12px 12px 0 0; top: auto; bottom: 0; transform: translateY(110%); }
+      .chatbox.open { transform: translateY(0); }
+      .chatbox.expanded { width: 100vw; height: 95vh; }
+      .chat-toggle { width: 24px; height: 70px; font-size: 12px; }
+      .mcq-toggle { width: 24px; height: 70px; font-size: 10px; }
+      .mcqbox { width: 100vw; height: 75vh; border-radius: 12px 12px 0 0; top: auto; bottom: 0; right: 0; transform: translateY(110%); }
+      .mcqbox.open { transform: translateY(0); }
+      .mcqbox.expanded { width: 100vw; height: 95vh; }
+      .fc-toggle { width: 24px; height: 70px; font-size: 10px; }
+      .fcbox { width: 100vw; height: 75vh; border-radius: 12px 12px 0 0; top: auto; bottom: 0; right: 0; transform: translateY(110%); }
+      .fcbox.open { transform: translateY(0); }
+      .fcbox.expanded { width: 100vw; height: 95vh; }
+      .faq-toggle { width: 24px; height: 70px; font-size: 10px; }
+      .faqbox { width: 100vw; height: 75vh; border-radius: 12px 12px 0 0; top: auto; bottom: 0; right: 0; transform: translateY(110%); }
+      .faqbox.open { transform: translateY(0); }
+      .faqbox.expanded { width: 100vw; height: 95vh; }
+    }
+
+    /* ═══ MCQ GENERATOR ═══ */
+    .mcq-toggle {
+      position: fixed;
+      right: 0;
+      top: 40%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 90px;
+      background: #e67e22;
+      color: #fff;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      cursor: grab;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      box-shadow: -3px 0 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transition: background 0.2s, width 0.2s;
+      user-select: none;
+      padding: 0 2px;
+    }
+    .mcq-toggle:hover { background: #d35400; width: 32px; }
+    .mcq-toggle:active { cursor: grabbing; }
+    .mcq-toggle.hidden { transform: translateX(100%) translateY(-50%); pointer-events: none; opacity: 0; transition: transform 0.3s, opacity 0.3s; }
+    .mcq-toggle.dragging { opacity: 0.85; }
+
+    .mcqbox {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateX(110%) translateY(-50%);
+      width: 440px;
+      height: 560px;
+      background: var(--content-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px 0 0 12px;
+      box-shadow: -6px 0 32px rgba(0,0,0,0.18);
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: var(--font-body);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mcqbox.open { transform: translateX(0) translateY(-50%); }
+    .mcqbox.expanded { width: 650px; height: 85vh; }
+
+    .mcq-header {
+      padding: 10px 14px;
+      background: #e67e22;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .mcq-header-title { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .mcq-header select {
+      flex: 1;
+      min-width: 0;
+      padding: 4px 6px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 11px;
+      font-family: var(--font-body);
+      outline: none;
+      cursor: pointer;
+    }
+    .mcq-header select option { background: #18181b; color: #d4d4d8; }
+    .mcq-expand-btn, .mcq-close-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .mcq-expand-btn:hover, .mcq-close-btn:hover { color: #fff; }
+
+    .mcq-context-bar {
+      padding: 6px 14px;
+      background: rgba(230,126,34,0.1);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      color: #e67e22;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .mcq-context-bar.visible { display: flex; }
+    .mcq-context-bar .ctx-label { font-weight: 600; }
+    .mcq-context-bar .ctx-file { opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .mcq-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 0;
+      position: relative;
+    }
+    .mcq-body::-webkit-scrollbar { width: 4px; }
+    .mcq-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .mcq-carousel {
+      display: flex;
+      height: 100%;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mcq-slide {
+      min-width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .mcq-slide::-webkit-scrollbar { width: 4px; }
+    .mcq-slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .mcq-nav-arrows {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .mcq-nav-arrows.visible { display: flex; }
+    .mcq-nav-arrow {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--content-bg);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      padding: 0;
+    }
+    .mcq-nav-arrow:hover { border-color: #e67e22; color: #e67e22; }
+    .mcq-nav-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+    .mcq-nav-counter {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .mcq-actions {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .mcq-actions button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background 0.15s;
+    }
+    .mcq-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .mcq-gen-btn { background: #e67e22; color: #fff; }
+    .mcq-gen-btn:hover:not(:disabled) { background: #d35400; }
+    .mcq-next-btn { background: var(--code-bg); color: var(--text); }
+    .mcq-next-btn:hover:not(:disabled) { background: var(--border); }
+    .mcq-score {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* MCQ card styles */
+    .mcq-card {
+      margin-bottom: 20px;
+    }
+    .mcq-question-num {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #e67e22;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .mcq-question-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    .mcq-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .mcq-option {
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1.5;
+      transition: all 0.15s;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: var(--content-bg);
+    }
+    .mcq-option:hover:not(.disabled) {
+      border-color: #e67e22;
+      background: rgba(230,126,34,0.04);
+    }
+    .mcq-option.disabled { cursor: default; }
+    .mcq-option .opt-letter {
+      font-weight: 700;
+      color: var(--text-secondary);
+      min-width: 20px;
+      flex-shrink: 0;
+    }
+    .mcq-option.selected {
+      border-color: #3b82f6;
+      background: rgba(59,130,246,0.06);
+    }
+    .mcq-option.correct {
+      border-color: #22c55e;
+      background: rgba(34,197,94,0.08);
+    }
+    .mcq-option.correct .opt-letter { color: #22c55e; }
+    .mcq-option.wrong {
+      border-color: #ef4444;
+      background: rgba(239,68,68,0.06);
+    }
+    .mcq-option.wrong .opt-letter { color: #ef4444; }
+
+    .mcq-explanation {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--code-bg);
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      display: none;
+    }
+    .mcq-explanation.visible { display: block; }
+    .mcq-explanation .exp-correct {
+      color: #22c55e;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .mcq-explanation .exp-wrong {
+      color: #ef4444;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    .mcq-explanation .exp-text {
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .mcq-explanation .exp-detail {
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .mcq-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .mcq-loading .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--border);
+      border-top: 3px solid #e67e22;
+      border-radius: 50%;
+      animation: mcq-spin 0.8s linear infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes mcq-spin { to { transform: rotate(360deg); } }
+
+    .mcq-empty {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .mcq-empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* ═══ FLASHCARD GENERATOR ═══ */
+    .fc-toggle {
+      position: fixed;
+      right: 0;
+      top: 60%;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      background: #5c6b5e;
+      color: #e8e4df;
+      border: none;
+      padding: 14px 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      border-radius: 10px 0 0 10px;
+      z-index: 10001;
+      box-shadow: -2px 0 12px rgba(92,107,94,0.25);
+      transition: all 0.2s;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .fc-toggle:hover { padding-right: 12px; background: #4a5a4c; }
+
+    .fcbox {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%) translateX(110%);
+      width: 420px;
+      height: 520px;
+      background: var(--content-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px 0 0 14px;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.10);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      overflow: hidden;
+    }
+    .fcbox.open { transform: translateY(-50%) translateX(0); }
+    .fcbox.expanded { width: 700px; height: 80vh; }
+
+    .fc-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--code-bg);
+    }
+    .fc-header-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      margin-right: auto;
+    }
+    .fc-header select {
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--content-bg);
+      color: var(--text);
+      max-width: 140px;
+    }
+    .fc-expand-btn, .fc-close-btn, .fc-download-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .fc-expand-btn:hover, .fc-close-btn:hover, .fc-download-btn:hover { border-color: #5c6b5e; color: #5c6b5e; }
+
+    .fc-context-bar {
+      padding: 6px 14px;
+      font-size: 11px;
+      background: var(--code-bg);
+      border-bottom: 1px solid var(--border);
+      display: none;
+    }
+    .fc-context-bar.visible { display: flex; align-items: center; gap: 6px; }
+
+    .fc-body {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+    .fc-empty {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .fc-empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* Flashcard itself */
+    .fc-card-container {
+      width: 100%;
+      height: 100%;
+      perspective: 800px;
+      cursor: pointer;
+    }
+    .fc-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      transform-style: preserve-3d;
+    }
+    .fc-card-inner.flipped { transform: rotateY(180deg); }
+    .fc-card-front, .fc-card-back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .fc-card-front {
+      background: #3e4a40;
+      color: #e8e4df;
+      padding: 28px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border: 1px solid #4f5e51;
+    }
+    .fc-card-front .fc-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+    .fc-card-front .fc-card-question {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.5;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+    .fc-card-front .fc-card-question::-webkit-scrollbar { width: 3px; }
+    .fc-card-front .fc-card-question::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+    .fc-card-back {
+      background: #f4f1ec;
+      border: 1px solid #d6d0c4;
+      padding: 28px;
+      transform: rotateY(180deg);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .fc-card-back .fc-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #5c6b5e;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+    .fc-card-back .fc-card-answer {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .fc-card-back .fc-card-answer::-webkit-scrollbar { width: 3px; }
+    .fc-card-back .fc-card-answer::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .fc-card-back .fc-card-answer p { margin-bottom: 10px; }
+    .fc-card-back .fc-card-answer ul, .fc-card-back .fc-card-answer ol { margin-bottom: 10px; padding-left: 18px; }
+    .fc-card-back .fc-card-answer code { background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-size: 12px; }
+
+    .fc-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--code-bg);
+    }
+    .fc-gen-btn {
+      padding: 7px 18px;
+      border-radius: 8px;
+      border: none;
+      background: #5c6b5e;
+      color: #e8e4df;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .fc-gen-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(92,107,94,0.3); background: #4a5a4c; }
+    .fc-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .fc-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fc-nav-arrow {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--content-bg);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      padding: 0;
+    }
+    .fc-nav-arrow:hover { border-color: #5c6b5e; color: #5c6b5e; }
+    .fc-nav-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+    .fc-nav-counter {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+    }
+    .fc-hint {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .fc-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .fc-loading .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--border);
+      border-top: 3px solid #5c6b5e;
+      border-radius: 50%;
+      animation: fc-spin 0.8s linear infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes fc-spin { to { transform: rotate(360deg); } }
+
+    /* ═══ FAQ / QUICK REVIEW DRAWER ═══ */
+    .faq-toggle {
+      position: fixed;
+      right: 0;
+      top: 80%;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      background: #4a6670;
+      color: #e4eaed;
+      border: none;
+      padding: 14px 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      border-radius: 10px 0 0 10px;
+      z-index: 10001;
+      box-shadow: -2px 0 12px rgba(74,102,112,0.25);
+      transition: all 0.2s;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .faq-toggle:hover { padding-right: 12px; background: #3a535c; }
+
+    .faqbox {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%) translateX(110%);
+      width: 440px;
+      height: 560px;
+      background: var(--content-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px 0 0 14px;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.10);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      overflow: hidden;
+    }
+    .faqbox.open { transform: translateY(-50%) translateX(0); }
+    .faqbox.expanded { width: 700px; height: 80vh; }
+
+    .faq-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--code-bg);
+    }
+    .faq-header-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      margin-right: auto;
+    }
+    .faq-header select {
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--content-bg);
+      color: var(--text);
+      max-width: 140px;
+    }
+    .faq-expand-btn, .faq-close-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .faq-expand-btn:hover, .faq-close-btn:hover { border-color: #4a6670; color: #4a6670; }
+
+    .faq-context-bar {
+      padding: 6px 14px;
+      font-size: 11px;
+      background: var(--code-bg);
+      border-bottom: 1px solid var(--border);
+      display: none;
+    }
+    .faq-context-bar.visible { display: flex; align-items: center; gap: 6px; }
+
+    .faq-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+    }
+    .faq-body::-webkit-scrollbar { width: 5px; }
+    .faq-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .faq-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .faq-empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+    .faq-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .faq-loading .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--border);
+      border-top: 3px solid #4a6670;
+      border-radius: 50%;
+      animation: fc-spin 0.8s linear infinite;
+      margin-bottom: 10px;
+    }
+
+    /* FAQ Accordion items */
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .faq-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .faq-item-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      background: var(--code-bg);
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .faq-item-header:hover { background: var(--sidebar-hover); }
+    .faq-item-tag {
+      flex-shrink: 0;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #fff;
+      margin-top: 2px;
+    }
+    .faq-tag-faq { background: #4a6670; }
+    .faq-tag-confusion { background: #b85c38; }
+    .faq-tag-application { background: #4a7c59; }
+    .faq-tag-keyconcept { background: #6b5b8a; }
+    .faq-tag-examtip { background: #8a7530; }
+    .faq-item-question {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .faq-item-chevron {
+      flex-shrink: 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: transform 0.25s;
+      margin-top: 2px;
+    }
+    .faq-item.open .faq-item-chevron { transform: rotate(180deg); }
+    .faq-item-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 14px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .faq-item.open .faq-item-answer {
+      max-height: 600px;
+      padding: 10px 14px 14px;
+      border-top: 1px solid var(--border);
+    }
+    .faq-item-answer p { margin-bottom: 8px; }
+    .faq-item-answer ul, .faq-item-answer ol { padding-left: 18px; margin-bottom: 8px; }
+    .faq-item-answer code { background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-size: 12px; }
+    .faq-item-answer strong { color: var(--heading); }
+
+    .faq-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--code-bg);
+      flex-wrap: wrap;
+    }
+    .faq-cat-select {
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--content-bg);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      min-width: 0;
+    }
+    .faq-gen-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: none;
+      background: #4a6670;
+      color: #e4eaed;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .faq-gen-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(74,102,112,0.3); background: #3a535c; }
+    .faq-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .faq-clear-btn {
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .faq-clear-btn:hover { border-color: #b85c38; color: #b85c38; }
+    .faq-count {
+      width: 100%;
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-top: 2px;
+    }
   </style>
 </head>
 
@@ -781,6 +1947,126 @@
   </div>
 
   <button class="scroll-top" id="scrollTop">&#8593;</button>
+
+  <!-- ═══ CHATBOX ═══ -->
+  <button class="chat-toggle" id="chatToggle" title="Open AI Chat">AI Chat</button>
+  <div class="chatbox" id="chatbox">
+    <div class="chat-header">
+      <span class="chat-header-title">AI Chat</span>
+      <select id="chatModelSelect"></select>
+      <button class="chat-expand-btn" id="chatExpand" title="Expand">&#x26F6;</button>
+      <button class="chat-close-btn" id="chatClose" title="Close">&times;</button>
+    </div>
+    <div class="chat-context-bar" id="chatContextBar">
+      <span class="ctx-label">Context:</span>
+      <span class="ctx-file" id="chatContextFile"></span>
+      <button class="ctx-clear" id="chatContextClear" title="Remove context">&times;</button>
+    </div>
+    <div class="chat-api-bar" id="chatApiBar">
+      <input type="password" id="chatApiKey" placeholder="OpenRouter API key" />
+      <button id="chatApiSave">Save</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+      <textarea id="chatInput" rows="1" placeholder="Ask about this lecture..."></textarea>
+      <button id="chatSend">Send</button>
+    </div>
+  </div>
+
+  <!-- ═══ MCQ GENERATOR ═══ -->
+  <button class="mcq-toggle" id="mcqToggle" title="MCQ Generator">MCQ Quiz</button>
+  <div class="mcqbox" id="mcqbox">
+    <div class="mcq-header">
+      <span class="mcq-header-title">MCQ Quiz</span>
+      <select id="mcqModelSelect"></select>
+      <button class="mcq-expand-btn" id="mcqExpand" title="Expand">&#x26F6;</button>
+      <button class="mcq-close-btn" id="mcqClose" title="Close">&times;</button>
+    </div>
+    <div class="mcq-context-bar" id="mcqContextBar">
+      <span class="ctx-label">Lecture:</span>
+      <span class="ctx-file" id="mcqContextFile"></span>
+    </div>
+    <div class="mcq-body" id="mcqBody">
+      <div class="mcq-empty">
+        <div class="mcq-empty-icon">🎯</div>
+        <div>Open a lecture, then click <b>Generate MCQs</b><br>to get NPTEL-style exam questions.</div>
+      </div>
+    </div>
+    <div class="mcq-actions">
+      <button class="mcq-gen-btn" id="mcqGenerate">Generate MCQs</button>
+      <button class="mcq-next-btn" id="mcqNext" style="display:none">Next Set</button>
+      <div class="mcq-nav-arrows" id="mcqNavArrows">
+        <button class="mcq-nav-arrow" id="mcqPrev" title="Previous">&larr;</button>
+        <span class="mcq-nav-counter" id="mcqNavCounter">1/5</span>
+        <button class="mcq-nav-arrow" id="mcqNextQ" title="Next">&rarr;</button>
+      </div>
+      <span class="mcq-score" id="mcqScore"></span>
+    </div>
+  </div>
+
+  <!-- ═══ FLASHCARD GENERATOR ═══ -->
+  <button class="fc-toggle" id="fcToggle" title="Flashcards">Flashcards</button>
+  <div class="fcbox" id="fcbox">
+    <div class="fc-header">
+      <span class="fc-header-title">Flashcards</span>
+      <select id="fcModelSelect"></select>
+      <button class="fc-expand-btn" id="fcExpand" title="Expand">&#x26F6;</button>
+      <button class="fc-download-btn" id="fcDownload" title="Download" style="display:none">&#x2B73;</button>
+      <button class="fc-close-btn" id="fcClose" title="Close">&times;</button>
+    </div>
+    <div class="fc-context-bar" id="fcContextBar">
+      <span class="ctx-label">Lecture:</span>
+      <span class="ctx-file" id="fcContextFile"></span>
+    </div>
+    <div class="fc-body" id="fcBody">
+      <div class="fc-empty">
+        <div class="fc-empty-icon">🃏</div>
+        <div>Open a lecture, then click <b>Generate Flashcards</b><br>to create revision cards.</div>
+      </div>
+    </div>
+    <div class="fc-actions">
+      <button class="fc-gen-btn" id="fcGenerate">Generate Flashcards</button>
+      <div class="fc-nav" id="fcNav" style="display:none">
+        <button class="fc-nav-arrow" id="fcPrev">&larr;</button>
+        <span class="fc-nav-counter" id="fcNavCounter">1/10</span>
+        <button class="fc-nav-arrow" id="fcNextCard">&rarr;</button>
+      </div>
+      <span class="fc-hint" id="fcHint" style="display:none">Click card to flip</span>
+    </div>
+  </div>
+
+  <!-- ═══ FAQ / QUICK REVIEW DRAWER ═══ -->
+  <button class="faq-toggle" id="faqToggle" title="Quick Review">Review</button>
+  <div class="faqbox" id="faqbox">
+    <div class="faq-header">
+      <span class="faq-header-title">Quick Review</span>
+      <select id="faqModelSelect"></select>
+      <button class="faq-expand-btn" id="faqExpand" title="Expand">&#x26F6;</button>
+      <button class="faq-close-btn" id="faqClose" title="Close">&times;</button>
+    </div>
+    <div class="faq-context-bar" id="faqContextBar">
+      <span class="ctx-label">Lecture:</span>
+      <span class="ctx-file" id="faqContextFile"></span>
+    </div>
+    <div class="faq-body" id="faqBody">
+      <div class="faq-empty">
+        <div class="faq-empty-icon">&#x1F4CB;</div>
+        <div>Select a category below &amp; click <b>Generate</b><br>to get one Q&amp;A at a time. No repeats!</div>
+      </div>
+    </div>
+    <div class="faq-actions">
+      <select class="faq-cat-select" id="faqCatSelect">
+        <option value="FAQ">&#x2753; FAQ</option>
+        <option value="Common Confusion">&#x26A0;&#xFE0F; Common Confusion</option>
+        <option value="Application">&#x1F310; Real-World Application</option>
+        <option value="Exam Tip">&#x1F4DD; Exam Tip</option>
+        <option value="Key Concept">&#x1F511; Key Concept</option>
+      </select>
+      <button class="faq-gen-btn" id="faqGenerate">Generate</button>
+      <button class="faq-clear-btn" id="faqClear" title="Clear all">Clear</button>
+      <span class="faq-count" id="faqCount"></span>
+    </div>
+  </div>
 
   <!-- ═══ EMBEDDED MARKDOWN DATA (auto-generated by build.py) ═══ -->
   <script type="text/x-markdown" data-path="Computer_networks/Lecture 01-05/Lecture_01_Complete_Explanation.md">
@@ -28647,6 +29933,7 @@ After running a set of test cases, the tool produces a report showing coverage p
     // ── Load File ──
     async function loadFile(filepath) {
       currentFile = filepath;
+      lastLoadedMd = null;
       window.location.hash = encodeURIComponent(filepath);
 
       document.querySelectorAll('.tree-file').forEach(e => e.classList.remove('active'));
@@ -28675,11 +29962,19 @@ After running a set of test cases, the tool produces a report showing coverage p
           md = await res.text();
         } else throw new Error('DROP_NEEDED');
 
+        // Store raw markdown for chat context
+        lastLoadedMd = md;
+
         mdContent.innerHTML = marked.parse(md);
         mdContent.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
         document.getElementById('contentWrapper').scrollTop = 0;
         closeMobileSidebar();
+
+        // Update chat context immediately after successful load
+        updateChatContext();
       } catch (err) {
+        lastLoadedMd = null;
+        updateChatContext();
         if (err.message === 'DROP_NEEDED') {
           mdContent.innerHTML = `<div class="welcome"><h2>Drop the file</h2><p>Drag &amp; drop <b>${filepath.split('/').pop()}</b> onto this page, then click it again.</p></div>`;
         } else {
@@ -28803,7 +30098,1326 @@ After running a set of test cases, the tool produces a report showing coverage p
       }
     });
 
+    // ═══ CHATBOX LOGIC ═══
+    const chatToggle = document.getElementById('chatToggle');
+    const chatbox = document.getElementById('chatbox');
+    const chatClose = document.getElementById('chatClose');
+    const chatModelSelect = document.getElementById('chatModelSelect');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const chatApiBar = document.getElementById('chatApiBar');
+    const chatApiKey = document.getElementById('chatApiKey');
+    const chatApiSave = document.getElementById('chatApiSave');
+    const chatContextBar = document.getElementById('chatContextBar');
+    const chatContextFile = document.getElementById('chatContextFile');
+    const chatContextClear = document.getElementById('chatContextClear');
+
+    let chatHistory = [];
+    let chatLectureContext = null;
+    let chatLectureFile = null;
+    let chatStreaming = false;
+    let lastLoadedMd = null;  // raw markdown of the currently open lecture
+    let chatModelsLoaded = false;
+
+    // Fetch free models from OpenRouter API
+    async function fetchChatModels() {
+      if (chatModelsLoaded) return;
+      chatModelSelect.innerHTML = '<option value="" disabled>Loading models...</option>';
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/models');
+        if (!res.ok) throw new Error('Failed to fetch models');
+        const data = await res.json();
+
+        // Filter free models (prompt price = 0 and completion price = 0)
+        const freeModels = data.data
+          .filter(m => {
+            const pp = parseFloat(m.pricing?.prompt || '1');
+            const cp = parseFloat(m.pricing?.completion || '1');
+            return pp === 0 && cp === 0;
+          })
+          .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
+
+        chatModelSelect.innerHTML = '';
+
+        if (freeModels.length === 0) {
+          chatModelSelect.innerHTML = '<option value="" disabled>No free models found</option>';
+          return;
+        }
+
+        freeModels.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = m.name || m.id;
+          chatModelSelect.appendChild(opt);
+        });
+
+        // Restore saved selection
+        const savedModel = localStorage.getItem('nptel-chat-model');
+        if (savedModel && freeModels.some(m => m.id === savedModel)) {
+          chatModelSelect.value = savedModel;
+        }
+
+        chatModelsLoaded = true;
+
+        // Cache models for faster next load (valid for 1 hour)
+        localStorage.setItem('nptel-chat-models', JSON.stringify(freeModels));
+        localStorage.setItem('nptel-chat-models-ts', Date.now().toString());
+      } catch (err) {
+        // Try cached models
+        const cached = localStorage.getItem('nptel-chat-models');
+        if (cached) {
+          loadModelsFromList(JSON.parse(cached));
+        } else {
+          chatModelSelect.innerHTML = '<option value="" disabled>Failed to load models</option>';
+        }
+      }
+    }
+
+    function loadModelsFromList(models) {
+      chatModelSelect.innerHTML = '';
+      models.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = m.name || m.id;
+        chatModelSelect.appendChild(opt);
+      });
+      const savedModel = localStorage.getItem('nptel-chat-model');
+      if (savedModel && models.some(m => m.id === savedModel)) {
+        chatModelSelect.value = savedModel;
+      }
+      chatModelsLoaded = true;
+    }
+
+    // Load from cache instantly, then refresh in background
+    (function initChatModels() {
+      const cached = localStorage.getItem('nptel-chat-models');
+      const ts = parseInt(localStorage.getItem('nptel-chat-models-ts') || '0');
+      const oneHour = 60 * 60 * 1000;
+
+      if (cached && (Date.now() - ts) < oneHour) {
+        loadModelsFromList(JSON.parse(cached));
+      } else if (cached) {
+        // Show cached immediately, refresh in background
+        loadModelsFromList(JSON.parse(cached));
+        fetchChatModels();
+      } else {
+        fetchChatModels();
+      }
+    })();
+
+    chatModelSelect.addEventListener('change', () => {
+      localStorage.setItem('nptel-chat-model', chatModelSelect.value);
+    });
+
+    // API key management
+    const storedKey = localStorage.getItem('nptel-chat-apikey');
+    if (storedKey) {
+      chatApiKey.value = storedKey;
+      chatApiBar.classList.add('saved');
+    }
+    chatApiSave.addEventListener('click', () => {
+      const key = chatApiKey.value.trim();
+      if (key) {
+        localStorage.setItem('nptel-chat-apikey', key);
+        chatApiBar.classList.add('saved');
+      }
+    });
+
+    // Toggle chatbox
+    chatToggle.addEventListener('click', (e) => {
+      if (chatToggle._wasDragged) { chatToggle._wasDragged = false; return; }
+      chatbox.classList.add('open');
+      chatToggle.classList.add('hidden');
+      chatInput.focus();
+      updateChatContext();
+    });
+    chatClose.addEventListener('click', () => {
+      chatbox.classList.remove('open');
+      chatToggle.classList.remove('hidden');
+    });
+
+    // Expand / collapse chatbox
+    const chatExpand = document.getElementById('chatExpand');
+    chatExpand.addEventListener('click', () => {
+      chatbox.classList.toggle('expanded');
+      chatExpand.innerHTML = chatbox.classList.contains('expanded') ? '&#x29C9;' : '&#x26F6;';
+      chatExpand.title = chatbox.classList.contains('expanded') ? 'Shrink' : 'Expand';
+    });
+
+    // Draggable chat handle along right wall
+    (function initDragHandle() {
+      let isDragging = false;
+      let startY = 0;
+      let startTop = 0;
+
+      chatToggle.addEventListener('mousedown', onStart);
+      chatToggle.addEventListener('touchstart', onStart, { passive: false });
+
+      function onStart(e) {
+        isDragging = true;
+        chatToggle._wasDragged = false;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = chatToggle.getBoundingClientRect();
+        startY = clientY;
+        startTop = rect.top + rect.height / 2;
+        chatToggle.classList.add('dragging');
+        chatToggle.style.transition = 'none';
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const delta = clientY - startY;
+        if (Math.abs(delta) > 4) chatToggle._wasDragged = true;
+        let newTop = startTop + delta;
+        // Clamp within viewport
+        const halfH = chatToggle.offsetHeight / 2;
+        newTop = Math.max(halfH + 8, Math.min(window.innerHeight - halfH - 8, newTop));
+        chatToggle.style.top = newTop + 'px';
+        chatToggle.style.transform = 'translateY(-50%)';
+      }
+
+      function onEnd() {
+        isDragging = false;
+        chatToggle.classList.remove('dragging');
+        chatToggle.style.transition = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        // Save position
+        localStorage.setItem('nptel-chat-handle-top', chatToggle.style.top);
+      }
+
+      // Restore saved position
+      const saved = localStorage.getItem('nptel-chat-handle-top');
+      if (saved) {
+        chatToggle.style.top = saved;
+        chatToggle.style.transform = 'translateY(-50%)';
+      }
+    })();
+
+    // Auto-update context when a lecture is loaded
+    function updateChatContext() {
+      // Priority: lastLoadedMd (always has raw md) > EMBEDDED_MD > rendered text
+      if (currentFile && lastLoadedMd) {
+        chatLectureContext = lastLoadedMd;
+        chatLectureFile = currentFile;
+        chatContextFile.textContent = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+        chatContextBar.classList.add('visible');
+      } else if (currentFile && EMBEDDED_MD[currentFile]) {
+        chatLectureContext = EMBEDDED_MD[currentFile];
+        chatLectureFile = currentFile;
+        chatContextFile.textContent = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+        chatContextBar.classList.add('visible');
+      } else {
+        chatLectureContext = null;
+        chatLectureFile = null;
+        chatContextBar.classList.remove('visible');
+      }
+    }
+
+    chatContextClear.addEventListener('click', () => {
+      chatLectureContext = null;
+      chatLectureFile = null;
+      chatContextBar.classList.remove('visible');
+    });
+
+    // Send message
+    async function chatSendMessage() {
+      const text = chatInput.value.trim();
+      if (!text || chatStreaming) return;
+
+      const apiKey = localStorage.getItem('nptel-chat-apikey');
+      if (!apiKey) {
+        chatApiBar.classList.remove('saved');
+        appendChatMsg('Please enter your OpenRouter API key above.', 'error');
+        return;
+      }
+
+      appendChatMsg(text, 'user');
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+
+      // Build messages array
+      const systemMsg = buildSystemMessage();
+      chatHistory.push({ role: 'user', content: text });
+
+      const msgs = [systemMsg, ...chatHistory];
+
+      chatStreaming = true;
+      chatSend.disabled = true;
+
+      const typingEl = appendChatMsg('Thinking...', 'typing');
+
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'NPTEL Notes Chat'
+          },
+          body: JSON.stringify({
+            model: chatModelSelect.value,
+            messages: msgs,
+            max_tokens: 2048,
+            stream: true
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || `API error ${res.status}`);
+        }
+
+        // Stream response
+        typingEl.remove();
+        const assistantEl = appendChatMsg('', 'assistant');
+        let fullResponse = '';
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+            try {
+              const json = JSON.parse(data);
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullResponse += delta;
+                assistantEl.innerHTML = marked.parse(fullResponse);
+              }
+            } catch {}
+          }
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatHistory.push({ role: 'assistant', content: fullResponse });
+
+        // Keep history manageable (last 20 messages)
+        if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+
+      } catch (err) {
+        typingEl.remove();
+        appendChatMsg(`Error: ${err.message}`, 'error');
+        // Remove the failed user message from history
+        chatHistory.pop();
+      } finally {
+        chatStreaming = false;
+        chatSend.disabled = false;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+
+    function buildSystemMessage() {
+      let sys = 'You are a helpful study assistant for NPTEL course notes. Answer questions clearly and concisely. Use examples from the lecture content when relevant. Format your responses with proper markdown.';
+      if (chatLectureContext && chatLectureFile) {
+        const lectureName = chatLectureFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+        sys += `\n\nThe student is currently reading: "${lectureName}"\nHere is the COMPLETE lecture content:\n\n---\n${chatLectureContext}\n---\n\nIMPORTANT: The above is the FULL lecture. All concepts mentioned in it ARE covered. When answering, refer to and use the lecture content above. If the student asks about a topic or concept number covered in the lecture, base your answer on this content. If the question is unrelated to the lecture, answer normally.`;
+      }
+      return { role: 'system', content: sys };
+    }
+
+    function appendChatMsg(text, type) {
+      const el = document.createElement('div');
+      el.className = `chat-msg ${type}`;
+      if (type === 'assistant' && text) {
+        el.innerHTML = marked.parse(text);
+      } else {
+        el.textContent = text;
+      }
+      chatMessages.appendChild(el);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return el;
+    }
+
+    chatSend.addEventListener('click', chatSendMessage);
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatSendMessage();
+      }
+    });
+
+    // Auto-resize textarea
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 80) + 'px';
+    });
+
     init();
+
+    // ═══ MCQ GENERATOR LOGIC ═══
+    const mcqToggle = document.getElementById('mcqToggle');
+    const mcqbox = document.getElementById('mcqbox');
+    const mcqClose = document.getElementById('mcqClose');
+    const mcqExpand = document.getElementById('mcqExpand');
+    const mcqModelSelect = document.getElementById('mcqModelSelect');
+    const mcqBody = document.getElementById('mcqBody');
+    const mcqGenerate = document.getElementById('mcqGenerate');
+    const mcqNext = document.getElementById('mcqNext');
+    const mcqScore = document.getElementById('mcqScore');
+    const mcqContextBar = document.getElementById('mcqContextBar');
+    const mcqContextFile = document.getElementById('mcqContextFile');
+
+    let mcqCorrectCount = 0;
+    let mcqTotalCount = 0;
+    let mcqGenerating = false;
+
+    // Populate MCQ model dropdown (reuse cached models from chat)
+    function populateMcqModels() {
+      mcqModelSelect.innerHTML = '';
+      const opts = chatModelSelect.querySelectorAll('option');
+      opts.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.textContent;
+        mcqModelSelect.appendChild(opt);
+      });
+      const savedModel = localStorage.getItem('nptel-mcq-model');
+      if (savedModel) mcqModelSelect.value = savedModel;
+      else if (chatModelSelect.value) mcqModelSelect.value = chatModelSelect.value;
+    }
+
+    // Sync models whenever chatModelSelect changes
+    const chatModelObserver = new MutationObserver(populateMcqModels);
+    chatModelObserver.observe(chatModelSelect, { childList: true });
+    populateMcqModels();
+
+    mcqModelSelect.addEventListener('change', () => {
+      localStorage.setItem('nptel-mcq-model', mcqModelSelect.value);
+    });
+
+    // Toggle MCQ panel
+    mcqToggle.addEventListener('click', (e) => {
+      if (mcqToggle._wasDragged) { mcqToggle._wasDragged = false; return; }
+      mcqbox.classList.add('open');
+      mcqToggle.classList.add('hidden');
+      updateMcqContext();
+    });
+    mcqClose.addEventListener('click', () => {
+      mcqbox.classList.remove('open');
+      mcqToggle.classList.remove('hidden');
+    });
+    mcqExpand.addEventListener('click', () => {
+      mcqbox.classList.toggle('expanded');
+      mcqExpand.innerHTML = mcqbox.classList.contains('expanded') ? '&#x29C9;' : '&#x26F6;';
+    });
+
+    // Draggable MCQ handle
+    (function initMcqDrag() {
+      let isDragging = false;
+      let startY = 0;
+      let startTop = 0;
+
+      mcqToggle.addEventListener('mousedown', onStart);
+      mcqToggle.addEventListener('touchstart', onStart, { passive: false });
+
+      function onStart(e) {
+        isDragging = true;
+        mcqToggle._wasDragged = false;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = mcqToggle.getBoundingClientRect();
+        startY = clientY;
+        startTop = rect.top + rect.height / 2;
+        mcqToggle.classList.add('dragging');
+        mcqToggle.style.transition = 'none';
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const delta = clientY - startY;
+        if (Math.abs(delta) > 4) mcqToggle._wasDragged = true;
+        let newTop = startTop + delta;
+        const halfH = mcqToggle.offsetHeight / 2;
+        newTop = Math.max(halfH + 8, Math.min(window.innerHeight - halfH - 8, newTop));
+        mcqToggle.style.top = newTop + 'px';
+        mcqToggle.style.transform = 'translateY(-50%)';
+      }
+
+      function onEnd() {
+        isDragging = false;
+        mcqToggle.classList.remove('dragging');
+        mcqToggle.style.transition = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        localStorage.setItem('nptel-mcq-handle-top', mcqToggle.style.top);
+      }
+
+      const saved = localStorage.getItem('nptel-mcq-handle-top');
+      if (saved) {
+        mcqToggle.style.top = saved;
+        mcqToggle.style.transform = 'translateY(-50%)';
+      }
+    })();
+
+    // MCQ context
+    function updateMcqContext() {
+      if (currentFile && lastLoadedMd) {
+        mcqContextFile.textContent = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+        mcqContextBar.classList.add('visible');
+      } else {
+        mcqContextBar.classList.remove('visible');
+      }
+    }
+
+    // Hook into loadFile to update MCQ context too
+    const _origLoadFile2 = loadFile;
+    loadFile = async function(filepath) {
+      await _origLoadFile2(filepath);
+      updateMcqContext();
+    };
+
+    // Generate MCQs
+    mcqGenerate.addEventListener('click', generateMCQs);
+    mcqNext.addEventListener('click', generateMCQs);
+
+    async function generateMCQs() {
+      const apiKey = localStorage.getItem('nptel-chat-apikey');
+      if (!apiKey) {
+        mcqBody.innerHTML = '<div class="mcq-empty" style="color:#ef4444;">Please set your OpenRouter API key in the AI Chat panel first.</div>';
+        return;
+      }
+      if (!currentFile || !lastLoadedMd) {
+        mcqBody.innerHTML = '<div class="mcq-empty">Open a lecture first, then generate MCQs.</div>';
+        return;
+      }
+      if (mcqGenerating) return;
+      mcqGenerating = true;
+      mcqGenerate.disabled = true;
+      mcqNext.style.display = 'none';
+
+      mcqBody.innerHTML = '<div class="mcq-loading"><div class="spinner"></div><div>Generating NPTEL-style questions...</div></div>';
+
+      const lectureName = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+      const systemPrompt = `You are an NPTEL exam question generator. Generate exactly 5 multiple-choice questions (MCQs) based on the provided lecture content. These should be similar to what NPTEL asks in their final certification examination.
+
+Rules:
+- Questions should test conceptual understanding, not just recall
+- Each question must have exactly 4 options (A, B, C, D)
+- Only one correct answer per question
+- Questions should range from moderate to slightly tricky
+- Cover different topics/concepts from the lecture
+
+You MUST respond in this EXACT JSON format and nothing else:
+{
+  "questions": [
+    {
+      "question": "<question text>",
+      "options": {
+        "A": "<option A text>",
+        "B": "<option B text>",
+        "C": "<option C text>",
+        "D": "<option D text>"
+      },
+      "correct": "<A/B/C/D>",
+      "explanation": "<why the correct answer is correct>",
+      "wrong_explanations": {
+        "A": "<why A is wrong (skip if A is correct)>",
+        "B": "<why B is wrong (skip if B is correct)>",
+        "C": "<why C is wrong (skip if C is correct)>",
+        "D": "<why D is wrong (skip if D is correct)>"
+      }
+    }
+  ]
+}
+
+Respond with ONLY the JSON, no markdown fences, no extra text.`;
+
+      const userMsg = `Lecture: "${lectureName}"
+
+Content:
+${lastLoadedMd}`;
+
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'NPTEL MCQ Generator'
+          },
+          body: JSON.stringify({
+            model: mcqModelSelect.value,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userMsg }
+            ],
+            max_tokens: 4096,
+            temperature: 0.7
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || `API error ${res.status}`);
+        }
+
+        const data = await res.json();
+        let content = data.choices?.[0]?.message?.content || '';
+
+        // Clean up response — strip markdown fences if present
+        content = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+
+        // Try to extract JSON if there's extra text
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) content = jsonMatch[0];
+
+        const parsed = JSON.parse(content);
+        if (!parsed.questions || !Array.isArray(parsed.questions)) throw new Error('Invalid format');
+
+        renderMCQs(parsed.questions);
+        mcqNext.style.display = 'inline-block';
+        document.getElementById('mcqNavArrows').classList.add('visible');
+
+      } catch (err) {
+        mcqBody.innerHTML = `<div class="mcq-empty" style="color:#ef4444;">Error: ${err.message}<br><br>Try again or switch to a different model.</div>`;
+        document.getElementById('mcqNavArrows').classList.remove('visible');
+      } finally {
+        mcqGenerating = false;
+        mcqGenerate.disabled = false;
+      }
+    }
+
+    // ═══ MCQ CAROUSEL NAVIGATION ═══
+    let mcqCurrentSlide = 0;
+    let mcqTotalSlides = 0;
+    const mcqPrevBtn = document.getElementById('mcqPrev');
+    const mcqNextQBtn = document.getElementById('mcqNextQ');
+    const mcqNavCounter = document.getElementById('mcqNavCounter');
+    const mcqNavArrows = document.getElementById('mcqNavArrows');
+
+    function mcqGoToSlide(idx) {
+      mcqCurrentSlide = Math.max(0, Math.min(mcqTotalSlides - 1, idx));
+      const carousel = mcqBody.querySelector('.mcq-carousel');
+      if (carousel) carousel.style.transform = `translateX(-${mcqCurrentSlide * 100}%)`;
+      mcqNavCounter.textContent = `${mcqCurrentSlide + 1}/${mcqTotalSlides}`;
+      mcqPrevBtn.disabled = mcqCurrentSlide === 0;
+      mcqNextQBtn.disabled = mcqCurrentSlide === mcqTotalSlides - 1;
+    }
+
+    mcqPrevBtn.addEventListener('click', () => mcqGoToSlide(mcqCurrentSlide - 1));
+    mcqNextQBtn.addEventListener('click', () => mcqGoToSlide(mcqCurrentSlide + 1));
+
+    function renderMCQs(questions) {
+      mcqBody.innerHTML = '';
+      let answeredCount = 0;
+      mcqCurrentSlide = 0;
+      mcqTotalSlides = questions.length;
+
+      const carousel = document.createElement('div');
+      carousel.className = 'mcq-carousel';
+
+      questions.forEach((q, idx) => {
+        const slide = document.createElement('div');
+        slide.className = 'mcq-slide';
+
+        const card = document.createElement('div');
+        card.className = 'mcq-card';
+
+        const numEl = document.createElement('div');
+        numEl.className = 'mcq-question-num';
+        numEl.textContent = `Question ${idx + 1} of ${questions.length}`;
+        card.appendChild(numEl);
+
+        const qText = document.createElement('div');
+        qText.className = 'mcq-question-text';
+        qText.textContent = q.question;
+        card.appendChild(qText);
+
+        const optionsEl = document.createElement('div');
+        optionsEl.className = 'mcq-options';
+
+        const explanation = document.createElement('div');
+        explanation.className = 'mcq-explanation';
+
+        const letters = ['A', 'B', 'C', 'D'];
+        letters.forEach(letter => {
+          if (!q.options[letter]) return;
+          const opt = document.createElement('div');
+          opt.className = 'mcq-option';
+          opt.innerHTML = `<span class="opt-letter">${letter}.</span><span>${q.options[letter]}</span>`;
+
+          opt.addEventListener('click', () => {
+            if (opt.classList.contains('disabled')) return;
+
+            optionsEl.querySelectorAll('.mcq-option').forEach(o => o.classList.add('disabled'));
+            answeredCount++;
+            mcqTotalCount++;
+
+            const isCorrect = letter === q.correct;
+            if (isCorrect) {
+              opt.classList.add('correct');
+              mcqCorrectCount++;
+            } else {
+              opt.classList.add('wrong');
+              const correctOpt = optionsEl.querySelectorAll('.mcq-option')[letters.indexOf(q.correct)];
+              if (correctOpt) correctOpt.classList.add('correct');
+            }
+
+            let expHTML = '';
+            expHTML += `<div class="exp-correct">✓ Correct Answer: ${q.correct}. ${q.options[q.correct]}</div>`;
+            expHTML += `<div class="exp-text">${q.explanation}</div>`;
+
+            if (!isCorrect && q.wrong_explanations && q.wrong_explanations[letter]) {
+              expHTML += `<div class="exp-wrong">✗ Why ${letter} is wrong:</div>`;
+              expHTML += `<div class="exp-detail">${q.wrong_explanations[letter]}</div>`;
+            }
+
+            letters.forEach(l => {
+              if (l === q.correct || l === letter) return;
+              if (q.wrong_explanations && q.wrong_explanations[l]) {
+                expHTML += `<div class="exp-wrong" style="opacity:0.7; font-size:12px;">✗ ${l}: ${q.wrong_explanations[l]}</div>`;
+              }
+            });
+
+            explanation.innerHTML = expHTML;
+            explanation.classList.add('visible');
+            mcqScore.textContent = `Score: ${mcqCorrectCount}/${mcqTotalCount}`;
+
+            // Auto-advance after 1.5s if not last slide
+            if (idx < questions.length - 1) {
+              setTimeout(() => mcqGoToSlide(idx + 1), 1500);
+            }
+          });
+
+          optionsEl.appendChild(opt);
+        });
+
+        card.appendChild(optionsEl);
+        card.appendChild(explanation);
+        slide.appendChild(card);
+        carousel.appendChild(slide);
+      });
+
+      mcqBody.appendChild(carousel);
+      mcqGoToSlide(0);
+    }
+
+    // ═══ FLASHCARD GENERATOR LOGIC ═══
+    const fcToggle = document.getElementById('fcToggle');
+    const fcbox = document.getElementById('fcbox');
+    const fcClose = document.getElementById('fcClose');
+    const fcExpand = document.getElementById('fcExpand');
+    const fcDownload = document.getElementById('fcDownload');
+    const fcBody = document.getElementById('fcBody');
+    const fcGenerate = document.getElementById('fcGenerate');
+    const fcNav = document.getElementById('fcNav');
+    const fcPrev = document.getElementById('fcPrev');
+    const fcNextCard = document.getElementById('fcNextCard');
+    const fcNavCounter = document.getElementById('fcNavCounter');
+    const fcHint = document.getElementById('fcHint');
+    const fcModelSelect = document.getElementById('fcModelSelect');
+    const fcContextBar = document.getElementById('fcContextBar');
+    const fcContextFile = document.getElementById('fcContextFile');
+    let fcGenerating = false;
+    let fcCards = [];
+    let fcCurrentIdx = 0;
+
+    // Toggle panel
+    fcToggle.addEventListener('click', (e) => {
+      if (fcToggle._wasDragged) return;
+      fcbox.classList.toggle('open');
+      if (fcbox.classList.contains('open')) {
+        fcToggle.classList.add('hidden');
+        updateFcContext();
+      } else {
+        fcToggle.classList.remove('hidden');
+      }
+    });
+    fcClose.addEventListener('click', () => {
+      fcbox.classList.remove('open');
+      fcToggle.classList.remove('hidden');
+    });
+    fcExpand.addEventListener('click', () => {
+      fcbox.classList.toggle('expanded');
+      fcExpand.innerHTML = fcbox.classList.contains('expanded') ? '&#x29C9;' : '&#x26F6;';
+    });
+
+    // Draggable FC handle
+    (function initFcDrag() {
+      let isDragging = false;
+      let startY = 0;
+      let startTop = 0;
+
+      fcToggle.addEventListener('mousedown', onStart);
+      fcToggle.addEventListener('touchstart', onStart, { passive: false });
+
+      function onStart(e) {
+        isDragging = true;
+        fcToggle._wasDragged = false;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = fcToggle.getBoundingClientRect();
+        startY = clientY;
+        startTop = rect.top + rect.height / 2;
+        fcToggle.classList.add('dragging');
+        fcToggle.style.transition = 'none';
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const delta = clientY - startY;
+        if (Math.abs(delta) > 4) fcToggle._wasDragged = true;
+        let newTop = startTop + delta;
+        const halfH = fcToggle.offsetHeight / 2;
+        newTop = Math.max(halfH + 8, Math.min(window.innerHeight - halfH - 8, newTop));
+        fcToggle.style.top = newTop + 'px';
+        fcToggle.style.transform = 'translateY(-50%)';
+      }
+
+      function onEnd() {
+        isDragging = false;
+        fcToggle.classList.remove('dragging');
+        fcToggle.style.transition = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        localStorage.setItem('nptel-fc-handle-top', fcToggle.style.top);
+      }
+
+      const saved = localStorage.getItem('nptel-fc-handle-top');
+      if (saved) {
+        fcToggle.style.top = saved;
+        fcToggle.style.transform = 'translateY(-50%)';
+      }
+    })();
+
+    // Copy model list from chat models
+    function syncFcModels() {
+      fcModelSelect.innerHTML = '';
+      const chatSel = document.getElementById('chatModelSelect');
+      Array.from(chatSel.options).forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.textContent;
+        fcModelSelect.appendChild(opt);
+      });
+      fcModelSelect.value = localStorage.getItem('nptel-fc-model') || chatSel.value;
+    }
+    new MutationObserver(() => syncFcModels()).observe(document.getElementById('chatModelSelect'), { childList: true });
+    syncFcModels();
+    fcModelSelect.addEventListener('change', () => localStorage.setItem('nptel-fc-model', fcModelSelect.value));
+
+    // FC context
+    function updateFcContext() {
+      if (currentFile && lastLoadedMd) {
+        fcContextFile.textContent = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+        fcContextBar.classList.add('visible');
+      } else {
+        fcContextBar.classList.remove('visible');
+      }
+    }
+
+    // Hook loadFile for FC context
+    const _origLoadFile3 = loadFile;
+    loadFile = async function(filepath) {
+      await _origLoadFile3(filepath);
+      updateFcContext();
+    };
+
+    // Navigate flashcards
+    function fcGoTo(idx) {
+      fcCurrentIdx = Math.max(0, Math.min(fcCards.length - 1, idx));
+      renderCurrentFlashcard();
+    }
+
+    function renderCurrentFlashcard() {
+      if (!fcCards.length) return;
+      const c = fcCards[fcCurrentIdx];
+
+      fcBody.innerHTML = '';
+      const container = document.createElement('div');
+      container.className = 'fc-card-container';
+      const inner = document.createElement('div');
+      inner.className = 'fc-card-inner';
+
+      // Front
+      const front = document.createElement('div');
+      front.className = 'fc-card-front';
+      front.innerHTML = `<div class="fc-card-label">Concept ${fcCurrentIdx + 1} of ${fcCards.length}</div><div class="fc-card-question">${escapeHtml(c.front)}</div>`;
+
+      // Back
+      const back = document.createElement('div');
+      back.className = 'fc-card-back';
+      back.innerHTML = `<div class="fc-card-label">Answer</div><div class="fc-card-answer">${marked.parse(c.back)}</div>`;
+
+      inner.appendChild(front);
+      inner.appendChild(back);
+      container.appendChild(inner);
+
+      container.addEventListener('click', () => inner.classList.toggle('flipped'));
+
+      fcBody.appendChild(container);
+      fcNavCounter.textContent = `${fcCurrentIdx + 1}/${fcCards.length}`;
+      fcPrev.disabled = fcCurrentIdx === 0;
+      fcNextCard.disabled = fcCurrentIdx === fcCards.length - 1;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    fcPrev.addEventListener('click', () => fcGoTo(fcCurrentIdx - 1));
+    fcNextCard.addEventListener('click', () => fcGoTo(fcCurrentIdx + 1));
+
+    // Generate flashcards
+    fcGenerate.addEventListener('click', generateFlashcards);
+
+    async function generateFlashcards() {
+      const apiKey = localStorage.getItem('nptel-chat-apikey');
+      if (!apiKey) {
+        fcBody.innerHTML = '<div class="fc-empty" style="color:#ef4444;">Please set your OpenRouter API key in the AI Chat panel first.</div>';
+        return;
+      }
+      if (!currentFile || !lastLoadedMd) {
+        fcBody.innerHTML = '<div class="fc-empty">Open a lecture first, then generate flashcards.</div>';
+        return;
+      }
+      if (fcGenerating) return;
+      fcGenerating = true;
+      fcGenerate.disabled = true;
+      fcNav.style.display = 'none';
+      fcHint.style.display = 'none';
+      fcDownload.style.display = 'none';
+
+      fcBody.innerHTML = '<div class="fc-loading"><div class="spinner"></div><div>Creating revision flashcards...</div></div>';
+
+      const lectureName = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+      const systemPrompt = `You are an NPTEL lecture revision flashcard generator. Create exactly 10 flashcards that comprehensively cover ALL key concepts from the provided lecture notes.
+
+Rules:
+- Each card has a "front" (concept/question) and "back" (detailed explanation/answer)
+- Front should be concise: a key term, concept question, or "What is...?" / "Explain..." / "How does...?"
+- Back should be thorough: 2-4 sentences explaining the concept clearly, with key formulas/steps if applicable
+- Cover the ENTIRE lecture - don't cluster on one section
+- Progress from fundamental concepts to advanced topics
+- Include important formulas, protocols, algorithms, or definitions mentioned
+- Make cards useful for quick revision before an NPTEL exam
+- Use markdown formatting in the back (bold for key terms, bullet lists for steps, code blocks for formulas)
+
+Respond ONLY with valid JSON:
+{
+  "cards": [
+    {"front": "What is X?", "back": "X is... **key detail**..."},
+    ...
+  ]
+}`;
+
+      try {
+        const model = fcModelSelect.value || 'meta-llama/llama-3.1-8b-instruct:free';
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + apiKey,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://nptel-notes-reader.local',
+            'X-Title': 'NPTEL Flashcard Generator'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `Lecture: ${lectureName}\n\n${lastLoadedMd}` }
+            ],
+            temperature: 0.5,
+            max_tokens: 4000
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || `API error ${res.status}`);
+        }
+
+        const data = await res.json();
+        let content = data.choices?.[0]?.message?.content || '';
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) content = jsonMatch[0];
+
+        const parsed = JSON.parse(content);
+        if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
+
+        fcCards = parsed.cards;
+        fcCurrentIdx = 0;
+        renderCurrentFlashcard();
+        fcNav.style.display = 'flex';
+        fcHint.style.display = 'inline';
+        fcDownload.style.display = 'flex';
+
+      } catch (err) {
+        fcBody.innerHTML = `<div class="fc-empty" style="color:#ef4444;">Error: ${err.message}<br><br>Try again or switch to a different model.</div>`;
+      } finally {
+        fcGenerating = false;
+        fcGenerate.disabled = false;
+      }
+    }
+
+    // Download flashcards as HTML file
+    fcDownload.addEventListener('click', () => {
+      if (!fcCards.length) return;
+      const lectureName = currentFile ? currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ') : 'Flashcards';
+
+      let html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${lectureName} - Flashcards</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; padding: 30px; }
+  h1 { text-align: center; margin-bottom: 30px; color: #333; font-size: 22px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .card-num { background: #3e4a40; color: #e8e4df; padding: 8px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .card-front { padding: 20px; font-size: 16px; font-weight: 600; color: #2c2c2c; line-height: 1.5; min-height: 80px; border-bottom: 1px solid #e0dbd2; }
+  .card-back { padding: 20px; font-size: 14px; line-height: 1.7; color: #444; background: #f4f1ec; }
+  .card-back strong, .card-back b { color: #3e4a40; }
+  .card-back ul, .card-back ol { padding-left: 20px; margin: 8px 0; }
+  .card-back code { background: #e8e8e8; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+  .card-back p { margin-bottom: 8px; }
+  .print-note { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+  @media print { body { padding: 10px; } .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; } }
+</style></head><body>
+<h1>${lectureName}</h1>
+<div class="cards">`;
+
+      fcCards.forEach((c, i) => {
+        html += `<div class="card"><div class="card-num">Card ${i + 1}</div><div class="card-front">${escapeHtml(c.front)}</div><div class="card-back">${marked.parse(c.back)}</div></div>`;
+      });
+
+      html += `</div><p class="print-note">Tip: Use Ctrl+P to print or save as PDF</p></body></html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = lectureName.replace(/\s+/g, '_') + '_Flashcards.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // ═══════════════════════════════════════════
+    // ═══ FAQ / QUICK REVIEW DRAWER JS ═══
+    // ═══════════════════════════════════════════
+    const faqToggle = document.getElementById('faqToggle');
+    const faqbox = document.getElementById('faqbox');
+    const faqClose = document.getElementById('faqClose');
+    const faqExpand = document.getElementById('faqExpand');
+    const faqBody = document.getElementById('faqBody');
+    const faqGenerate = document.getElementById('faqGenerate');
+    const faqClear = document.getElementById('faqClear');
+    const faqCatSelect = document.getElementById('faqCatSelect');
+    const faqModelSelect = document.getElementById('faqModelSelect');
+    const faqContextBar = document.getElementById('faqContextBar');
+    const faqContextFile = document.getElementById('faqContextFile');
+    const faqCount = document.getElementById('faqCount');
+
+    let faqGenerating = false;
+    let faqItems = [];       // accumulated items
+    let faqHistory = [];     // questions already asked (to avoid repeats)
+    let faqLectureKey = '';  // track which lecture the history belongs to
+
+    // Toggle open/close
+    faqToggle.addEventListener('click', function() {
+      if (this._wasDragged) return;
+      const isOpen = faqbox.classList.toggle('open');
+      faqToggle.classList.toggle('hidden', isOpen);
+    });
+    faqClose.addEventListener('click', () => {
+      faqbox.classList.remove('open');
+      faqToggle.classList.remove('hidden');
+    });
+    faqExpand.addEventListener('click', () => faqbox.classList.toggle('expanded'));
+
+    // Clear all
+    faqClear.addEventListener('click', () => {
+      faqItems = [];
+      faqHistory = [];
+      faqBody.innerHTML = `<div class="faq-empty">
+        <div class="faq-empty-icon">&#x1F4CB;</div>
+        <div>Select a category below &amp; click <b>Generate</b><br>to get one Q&amp;A at a time. No repeats!</div>
+      </div>`;
+      faqCount.textContent = '';
+    });
+
+    // Drag handle
+    (function() {
+      let isDragging = false, startY = 0, startTop = 0;
+      faqToggle.addEventListener('mousedown', onStart);
+      faqToggle.addEventListener('touchstart', onStart, { passive: false });
+
+      function onStart(e) {
+        isDragging = true;
+        faqToggle._wasDragged = false;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = faqToggle.getBoundingClientRect();
+        startY = clientY;
+        startTop = rect.top + rect.height / 2;
+        faqToggle.classList.add('dragging');
+        faqToggle.style.transition = 'none';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+      }
+      function onMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const delta = clientY - startY;
+        if (Math.abs(delta) > 4) faqToggle._wasDragged = true;
+        let newTop = startTop + delta;
+        const halfH = faqToggle.offsetHeight / 2;
+        newTop = Math.max(halfH + 8, Math.min(window.innerHeight - halfH - 8, newTop));
+        faqToggle.style.top = newTop + 'px';
+        faqToggle.style.transform = 'translateY(-50%)';
+      }
+      function onEnd() {
+        isDragging = false;
+        faqToggle.classList.remove('dragging');
+        faqToggle.style.transition = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        localStorage.setItem('nptel-faq-handle-top', faqToggle.style.top);
+      }
+      const saved = localStorage.getItem('nptel-faq-handle-top');
+      if (saved) { faqToggle.style.top = saved; faqToggle.style.transform = 'translateY(-50%)'; }
+    })();
+
+    // Model sync from chat
+    function syncFaqModels() {
+      faqModelSelect.innerHTML = '';
+      const chatSel = document.getElementById('chatModelSelect');
+      Array.from(chatSel.options).forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.textContent;
+        faqModelSelect.appendChild(opt);
+      });
+      faqModelSelect.value = localStorage.getItem('nptel-faq-model') || chatSel.value;
+    }
+    new MutationObserver(() => syncFaqModels()).observe(document.getElementById('chatModelSelect'), { childList: true });
+    syncFaqModels();
+    faqModelSelect.addEventListener('change', () => localStorage.setItem('nptel-faq-model', faqModelSelect.value));
+
+    // Context bar
+    function updateFaqContext() {
+      if (currentFile && lastLoadedMd) {
+        faqContextFile.textContent = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+        faqContextBar.classList.add('visible');
+        // Reset history when lecture changes
+        const newKey = currentFile;
+        if (newKey !== faqLectureKey) {
+          faqLectureKey = newKey;
+          faqItems = [];
+          faqHistory = [];
+          faqBody.innerHTML = `<div class="faq-empty">
+            <div class="faq-empty-icon">&#x1F4CB;</div>
+            <div>Select a category below &amp; click <b>Generate</b><br>to get one Q&amp;A at a time. No repeats!</div>
+          </div>`;
+          faqCount.textContent = '';
+        }
+      } else {
+        faqContextBar.classList.remove('visible');
+      }
+    }
+
+    // Hook loadFile
+    const _origLoadFile4 = loadFile;
+    loadFile = async function(filepath) {
+      await _origLoadFile4(filepath);
+      updateFaqContext();
+    };
+
+    // Append a single FAQ item to the accordion
+    function appendFaqItem(item) {
+      // Remove empty placeholder if present
+      const emptyEl = faqBody.querySelector('.faq-empty');
+      if (emptyEl) emptyEl.remove();
+
+      const el = document.createElement('div');
+      el.className = 'faq-item open';  // auto-open the new one
+
+      const tagClass = {
+        'FAQ': 'faq-tag-faq',
+        'Common Confusion': 'faq-tag-confusion',
+        'Application': 'faq-tag-application',
+        'Key Concept': 'faq-tag-keyconcept',
+        'Exam Tip': 'faq-tag-examtip'
+      }[item.tag] || 'faq-tag-faq';
+
+      el.innerHTML = `
+        <div class="faq-item-header">
+          <span class="faq-item-tag ${tagClass}">${escapeHtml(item.tag)}</span>
+          <span class="faq-item-question">${escapeHtml(item.question)}</span>
+          <span class="faq-item-chevron">&#x25BC;</span>
+        </div>
+        <div class="faq-item-answer">${marked.parse(item.answer)}</div>
+      `;
+
+      el.querySelector('.faq-item-header').addEventListener('click', () => {
+        el.classList.toggle('open');
+      });
+
+      // Close previously open items
+      faqBody.querySelectorAll('.faq-item.open').forEach(prev => prev.classList.remove('open'));
+
+      faqBody.appendChild(el);
+      faqCount.textContent = `${faqItems.length} items`;
+
+      // Scroll to the new item
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Generate single FAQ item
+    faqGenerate.addEventListener('click', generateSingleFaq);
+
+    async function generateSingleFaq() {
+      const apiKey = localStorage.getItem('nptel-chat-apikey');
+      if (!apiKey) {
+        faqBody.innerHTML = '<div class="faq-empty" style="color:#ef4444;">Please set your OpenRouter API key in the AI Chat panel first.</div>';
+        return;
+      }
+      if (!currentFile || !lastLoadedMd) {
+        faqBody.innerHTML = '<div class="faq-empty">Open a lecture first, then generate review.</div>';
+        return;
+      }
+      if (faqGenerating) return;
+      faqGenerating = true;
+      faqGenerate.disabled = true;
+      faqGenerate.textContent = 'Generating...';
+
+      const category = faqCatSelect.value;
+      const lectureName = currentFile.split('/').pop().replace(/\.md$/, '').replace(/_/g, ' ');
+
+      // Build the "already asked" list so AI doesn't repeat
+      const prevQuestions = faqHistory
+        .filter(h => h.tag === category)
+        .map((h, i) => `${i + 1}. ${h.question}`)
+        .join('\n');
+
+      const categoryDescriptions = {
+        'FAQ': 'A frequently asked question any student would ask about this topic. Basic "what/why/how" style.',
+        'Common Confusion': 'A misconception, tricky point, or thing students commonly get wrong. Start the answer by explaining the confusion, then clarify the correct understanding.',
+        'Application': 'Where and how this concept is applied in real-world systems, industry, or other subjects. Give a concrete example.',
+        'Exam Tip': 'An important point likely to appear in NPTEL exams — a tricky MCQ pattern, key formula to remember, or a critical "don\'t forget" reminder.',
+        'Key Concept': 'The single most important takeaway or a crucial concept from this lecture, summarized clearly.'
+      };
+
+      let avoidBlock = '';
+      if (prevQuestions) {
+        avoidBlock = `\n\nIMPORTANT — These questions have ALREADY been generated for this category. You MUST NOT repeat or rephrase any of them. Generate something completely different covering a different part of the lecture:\n${prevQuestions}`;
+      }
+
+      const systemPrompt = `You are an NPTEL exam preparation expert. Generate exactly 1 review question and answer for the "${category}" category from the given lecture notes.
+
+Category description: ${categoryDescriptions[category]}
+
+Rules:
+- "question": concise and clear
+- "answer": 2-5 sentences, use markdown (**bold** for key terms, bullet lists, code blocks for formulas)
+- The answer must be self-contained and thorough enough for quick revision
+- Cover a part of the lecture NOT already covered by previous questions${avoidBlock}
+
+Respond ONLY with valid JSON:
+{"tag": "${category}", "question": "...", "answer": "..."}`;
+
+      try {
+        const model = faqModelSelect.value || 'meta-llama/llama-3.1-8b-instruct:free';
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + apiKey,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://nptel-notes-reader.local',
+            'X-Title': 'NPTEL Quick Review Generator'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `Lecture: ${lectureName}\n\n${lastLoadedMd}` }
+            ],
+            temperature: 0.7,
+            max_tokens: 1200
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || `API error ${res.status}`);
+        }
+
+        const data = await res.json();
+        let content = data.choices?.[0]?.message?.content || '';
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) content = jsonMatch[0];
+
+        const parsed = JSON.parse(content);
+        if (!parsed.question || !parsed.answer) throw new Error('Invalid format');
+
+        // Normalize tag in case AI changed it
+        parsed.tag = category;
+
+        faqItems.push(parsed);
+        faqHistory.push({ tag: parsed.tag, question: parsed.question });
+        appendFaqItem(parsed);
+
+      } catch (err) {
+        // Show error inline without clearing existing items
+        const errEl = document.createElement('div');
+        errEl.style.cssText = 'padding:10px 14px;color:#ef4444;font-size:12px;border:1px solid #ef4444;border-radius:8px;margin-bottom:8px;';
+        errEl.textContent = `Error: ${err.message} — Try again or switch model.`;
+        const emptyEl = faqBody.querySelector('.faq-empty');
+        if (emptyEl) emptyEl.remove();
+        faqBody.appendChild(errEl);
+        setTimeout(() => errEl.remove(), 5000);
+      } finally {
+        faqGenerating = false;
+        faqGenerate.disabled = false;
+        faqGenerate.textContent = 'Generate';
+      }
+    }
+
   </script>
 </body>
 </html>

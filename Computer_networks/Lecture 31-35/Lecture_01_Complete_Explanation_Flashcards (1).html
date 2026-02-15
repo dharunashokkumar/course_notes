@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Lecture 01 Complete Explanation - Flashcards</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; padding: 30px; }
+  h1 { text-align: center; margin-bottom: 30px; color: #333; font-size: 22px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .card-num { background: #3e4a40; color: #e8e4df; padding: 8px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .card-front { padding: 20px; font-size: 16px; font-weight: 600; color: #2c2c2c; line-height: 1.5; min-height: 80px; border-bottom: 1px solid #e0dbd2; }
+  .card-back { padding: 20px; font-size: 14px; line-height: 1.7; color: #444; background: #f4f1ec; }
+  .card-back strong, .card-back b { color: #3e4a40; }
+  .card-back ul, .card-back ol { padding-left: 20px; margin: 8px 0; }
+  .card-back code { background: #e8e8e8; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+  .card-back p { margin-bottom: 8px; }
+  .print-note { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+  @media print { body { padding: 10px; } .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; } }
+</style></head><body>
+<h1>Lecture 01 Complete Explanation</h1>
+<div class="cards"><div class="card"><div class="card-num">Card 1</div><div class="card-front">What is a protocol in computer networking?</div><div class="card-back"><p><strong>Protocol</strong> is a <em>set of rules</em> that governs how devices communicate over a network. It defines the format, timing, sequencing, and error handling required for successful data exchange. Protocols enable functionalities such as file transfer, email, and web browsing by providing a common language for heterogeneous systems.</p>
+</div></div><div class="card"><div class="card-num">Card 2</div><div class="card-front">How is network architecture visualized?</div><div class="card-back"><p>Network architecture is a <em>structured view</em> of how two remote computers communicate, combining a <strong>protocol stack</strong> with the underlying physical technology (wired, wireless, etc.). It shows the layers of rules that data passes through and the devices that implement each layer. This abstraction allows different physical setups to interoperate using the same standard protocols.</p>
+</div></div><div class="card"><div class="card-num">Card 3</div><div class="card-front">What are the main responsibilities of the Physical Layer (Layer 1)?</div><div class="card-back"><p>The <strong>Physical Layer</strong> handles <strong>signal transmission</strong> between devices. It converts <strong>digital data ↔ analog signals</strong> for transmission over media such as copper cables, fiber optics, or radio waves. Its sole purpose is to move bits from one endpoint to another; it does not interpret the data content.</p>
+</div></div><div class="card"><div class="card-num">Card 4</div><div class="card-front">What is a hub (repeater) and what are its key properties?</div><div class="card-back"><p><strong>Hub</strong> (or <strong>Repeater</strong>) is a <strong>Layer 1 device</strong> that simply amplifies and forwards electrical signals.</p>
+<ul>
+<li>Acts as a <strong>multi‑port concentrator</strong> for all connected hosts.</li>
+<li><strong>Regenerates</strong> weakened signals, but makes <strong>no intelligent forwarding decisions</strong>.</li>
+<li>All ports share the <strong>same collision domain</strong> and <strong>same broadcast domain</strong>.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 5</div><div class="card-front">Define collision domain and broadcast domain.</div><div class="card-back"><p><strong>Collision Domain</strong>: The network segment where simultaneous transmissions can interfere, causing <strong>collisions</strong> that require retransmission and waste bandwidth.
+<strong>Broadcast Domain</strong>: The set of devices that receive each other&#39;s <strong>broadcast frames</strong>; a broadcast sent by one host is heard by all others in the same domain. Devices can share a broadcast domain while belonging to separate collision domains.</p>
+</div></div><div class="card"><div class="card-num">Card 6</div><div class="card-front">How does the Data Link Layer (Layer 2) improve connectivity?</div><div class="card-back"><p>The <strong>Data Link Layer</strong> introduces <strong>Layer 2 switches</strong> that <strong>divide collision domains</strong>, reducing the chance of collisions and improving effective bandwidth. However, all ports remain in the <strong>same broadcast domain</strong>, so broadcasts still reach every device on the LAN. This layer adds MAC addressing and frame error detection.</p>
+</div></div><div class="card"><div class="card-num">Card 7</div><div class="card-front">What is the role of the Network Layer (Layer 3) and a router?</div><div class="card-back"><p>The <strong>Network Layer</strong> connects <strong>different networks</strong> (different broadcast domains) by <strong>routing</strong> packets based on logical addresses (IP). A <strong>router</strong> (or Layer 3 switch) <strong>divides both collision and broadcast domains</strong> and selects the <strong>optimal path</strong> for each packet across multiple networks. It operates up to the <strong>Network Layer</strong>, treating higher layers as payload.</p>
+</div></div><div class="card"><div class="card-num">Card 8</div><div class="card-front">What services does the Transport Layer (Layer 4) provide?</div><div class="card-back"><p>The <strong>Transport Layer</strong> offers <strong>process‑to‑process communication</strong> between applications on different hosts. It adds <strong>error control</strong>, <strong>flow control</strong>, and <strong>traffic management</strong> (e.g., congestion avoidance). Common protocols are <strong>TCP</strong> (reliable, connection‑oriented) and <strong>UDP</strong> (unreliable, connection‑less).</p>
+</div></div><div class="card"><div class="card-num">Card 9</div><div class="card-front">List the five layers of the TCP/IP protocol stack and their primary functions.</div><div class="card-back"><p><strong>TCP/IP Stack</strong> (top‑down):</p>
+<ol>
+<li><strong>Application</strong> – User‑level services (HTTP, FTP, SMTP).</li>
+<li><strong>Transport</strong> – Process‑to‑process delivery, error/flow control (TCP, UDP).</li>
+<li><strong>Network</strong> – Routing between networks (IPv4, IPv6).</li>
+<li><strong>Data Link</strong> – Local framing, MAC addressing, collision handling (Ethernet, Wi‑Fi).</li>
+<li><strong>Physical</strong> – Bit‑level signal transmission over media.</li>
+</ol>
+</div></div><div class="card"><div class="card-num">Card 10</div><div class="card-front">How do intermediate devices handle packets and what are examples of cross‑layer protocols?</div><div class="card-back"><p>Each intermediate device <strong>opens a packet only up to its own layer</strong>:</p>
+<ul>
+<li><strong>Hub</strong> – reads up to <strong>Physical</strong>; everything else is payload.</li>
+<li><strong>Layer 2 Switch</strong> – reads up to <strong>Data Link</strong>; higher layers are payload.</li>
+<li><strong>Router</strong> – reads up to <strong>Network</strong>; transport and above remain payload.
+At source and destination, the packet is processed through <strong>all layers</strong>. <strong>Cross‑layer protocols</strong> span two layers, e.g., <strong>DNS</strong> (Application ↔ Transport), <strong>ARP</strong> (Network ↔ Data Link), <strong>SNMP</strong> (Transport ↔ Network), and <strong>DHCP</strong> (multiple layers).</li>
+</ul>
+</div></div></div><p class="print-note">Tip: Use Ctrl+P to print or save as PDF</p></body></html>

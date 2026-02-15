@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Lecture 01 Complete Explanation - Flashcards</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; padding: 30px; }
+  h1 { text-align: center; margin-bottom: 30px; color: #333; font-size: 22px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .card-num { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; padding: 8px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .card-front { padding: 20px; font-size: 16px; font-weight: 600; color: #1a1a2e; line-height: 1.5; min-height: 80px; border-bottom: 1px solid #eee; }
+  .card-back { padding: 20px; font-size: 14px; line-height: 1.7; color: #444; background: #fafafa; }
+  .card-back strong, .card-back b { color: #6d28d9; }
+  .card-back ul, .card-back ol { padding-left: 20px; margin: 8px 0; }
+  .card-back code { background: #e8e8e8; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+  .card-back p { margin-bottom: 8px; }
+  .print-note { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+  @media print { body { padding: 10px; } .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; } }
+</style></head><body>
+<h1>Lecture 01 Complete Explanation</h1>
+<div class="cards"><div class="card"><div class="card-num">Card 1</div><div class="card-front">What is the primary focus of this course?</div><div class="card-back"><p><strong>Course Objective</strong></p>
+<ul>
+<li>Teaches the <em>background activities</em> that occur when two computers communicate (e.g., loading a webpage).</li>
+<li>Covers both <em>functionalities</em> (what we want) and <em>protocols</em> (how we achieve it).</li>
+<li>Emphasizes understanding the <strong>working principles</strong> of networks, not just using the Internet.</li>
+<li>Highlights real‑world impact: networks are as essential as power or water.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 2</div><div class="card-front">What is a protocol?</div><div class="card-back"><p><strong>Protocol Definition</strong></p>
+<ul>
+<li>A <strong>set of rules</strong> that enables communication between systems.</li>
+<li>Allows specific <em>functionalities</em> such as file transfer, email, or web browsing.</li>
+<li>Ties <em>functionalities</em> and <em>network architecture</em> together.</li>
+<li>Example: HTTP defines how web browsers request pages from servers.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 3</div><div class="card-front">What is network architecture?</div><div class="card-back"><p><strong>Network Architecture</strong></p>
+<ul>
+<li>A <em>visualization</em> of how two remote computers talk, using a <strong>protocol stack</strong> + underlying technology.</li>
+<li>Standard protocols let diverse networks (department, institute, country) interoperate.</li>
+<li>Architecture may differ physically, but the agreed‑upon protocols remain the same.</li>
+<li>This uniformity enables global communication across autonomous systems.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 4</div><div class="card-front">What does the Physical Layer do?</div><div class="card-back"><p><strong>Physical Layer (Layer 1)</strong></p>
+<ul>
+<li>Handles the <strong>actual transmission of signals</strong> over wires, fiber, or wireless media.</li>
+<li>Converts <strong>digital data (0/1) → analog signals</strong> for transmission and back again at the receiver.</li>
+<li>Examples: Ethernet cables, Wi‑Fi radios, fiber optics.</li>
+<li>Without this layer, no data can travel across the medium.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 5</div><div class="card-front">What is a Hub/Repeater?</div><div class="card-back"><p><strong>Hub / Repeater (Layer 1 Device)</strong></p>
+<ul>
+<li>A multi‑port concentrator that <strong>amplifies/regenerates</strong> incoming signals.</li>
+<li>All connected devices share the <strong>same collision domain</strong> and <strong>same broadcast domain</strong>.</li>
+<li>Operates only at the Physical Layer; it does not understand packet content.</li>
+<li>Useful when more than two nodes need to communicate over a shared medium.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 6</div><div class="card-front">Explain Collision Domain and Broadcast Domain.</div><div class="card-back"><p><strong>Collision Domain</strong></p>
+<ul>
+<li>Area where multiple devices may <strong>transmit simultaneously</strong>, causing signal <strong>collisions</strong> and retransmissions.</li>
+<li>Collisions waste bandwidth and reduce effective throughput.</li>
+</ul>
+<p><strong>Broadcast Domain</strong></p>
+<ul>
+<li>Region where <strong>all devices can hear every broadcast</strong> sent by any node.</li>
+<li>A hub creates a single broadcast domain; switches can segment collision domains but not broadcast domains.</li>
+<li>Example: In a room of people talking at once, everyone collides (re‑transmits) until they are heard.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 7</div><div class="card-front">What is the Data Link Layer and a Switch?</div><div class="card-back"><p><strong>Data Link Layer (Layer 2)</strong></p>
+<ul>
+<li>Provides <strong>smarter connectivity</strong> by dividing collision domains using a <strong>Layer 2 switch</strong>.</li>
+<li>Reduces collisions → higher effective bandwidth.</li>
+<li>Still maintains a <strong>single broadcast domain</strong>; all nodes receive broadcasts.</li>
+<li>Devices operate up to the Data Link Layer; anything above is treated as <strong>payload</strong>.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 8</div><div class="card-front">What is the Network Layer and a Router?</div><div class="card-back"><p><strong>Network Layer (Layer 3)</strong></p>
+<ul>
+<li>Responsible for <strong>routing</strong> – moving packets between <strong>different networks</strong>.</li>
+<li>Devices: <strong>Routers</strong> or <strong>Layer 3 switches</strong>.</li>
+<li>Divides <strong>both collision domains and broadcast domains</strong>, enabling scalable internetworks.</li>
+<li>Uses routing algorithms to select the <strong>optimum path</strong> among multiple possible routes.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 9</div><div class="card-front">What is a Cross‑Layer Protocol?</div><div class="card-back"><p><strong>Cross‑Layer Protocols</strong> span two adjacent layers:</p>
+<ul>
+<li><strong>DNS</strong> – Application ↔ Transport</li>
+<li><strong>ARP</strong> – Network ↔ Data Link</li>
+<li><strong>SNMP</strong> – Transport ↔ Network</li>
+<li><strong>DHCP</strong> – also operates across layers</li>
+<li>They enable functionality that cannot be expressed by a single layer alone.</li>
+</ul>
+</div></div><div class="card"><div class="card-num">Card 10</div><div class="card-front">Summarize the TCP/IP Stack and Top‑Down Approach.</div><div class="card-back"><p><strong>TCP/IP Protocol Stack (5 Layers)</strong></p>
+<ul>
+<li><strong>5. Application</strong> – HTTP, FTP, SMTP (user‑level apps)</li>
+<li><strong>4. Transport</strong> – TCP, UDP, RTP (process‑to‑process)</li>
+<li><strong>3. Network</strong> – IPv4, IPv6 (routing)</li>
+<li><strong>2. Data Link</strong> – Ethernet, Wi‑Fi, Bluetooth</li>
+<li><strong>1. Physical</strong> – wiring, signaling standards</li>
+</ul>
+<p><strong>Top‑Down Approach</strong></p>
+<ul>
+<li>Starts at the <strong>Application Layer</strong> and works down to Physical.</li>
+<li>This course follows the Top‑Down method (Kurose &amp; Ross textbook).</li>
+<li>Contrasts with Bottom‑Up (Tanenbaum) and Systems‑Approach (Peterson).</li>
+<li>Reference resources: IBM Redbook, TCP/IP Guide, IETF RFCs.</li>
+</ul>
+</div></div></div><p class="print-note">Tip: Use Ctrl+P to print or save as PDF</p></body></html>
